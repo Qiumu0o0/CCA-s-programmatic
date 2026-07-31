@@ -1,0 +1,362 @@
+{
+  "states": [
+    [
+      "q0",
+      "q0"
+    ],
+    [
+      "q0",
+      "q1"
+    ],
+    [
+      "q0",
+      "q2"
+    ],
+    [
+      "q1",
+      "q0"
+    ],
+    [
+      "q1",
+      "q1"
+    ],
+    [
+      "q1",
+      "q2"
+    ],
+    [
+      "q2",
+      "q0"
+    ],
+    [
+      "q2",
+      "q1"
+    ],
+    [
+      "q2",
+      "q2"
+    ]
+  ],
+  "events": [
+    {
+      "event": [
+        "e1",
+        "e1"
+      ],
+      "label": "a"
+    },
+    {
+      "event": [
+        "e2",
+        null
+      ],
+      "label": null
+    },
+    {
+      "event": [
+        "e3",
+        "e3"
+      ],
+      "label": "b"
+    },
+    {
+      "event": [
+        "e3",
+        "e4"
+      ],
+      "label": "b"
+    },
+    {
+      "event": [
+        "e3",
+        "e5"
+      ],
+      "label": "b"
+    },
+    {
+      "event": [
+        "e4",
+        "e3"
+      ],
+      "label": "b"
+    },
+    {
+      "event": [
+        "e4",
+        "e4"
+      ],
+      "label": "b"
+    },
+    {
+      "event": [
+        "e4",
+        "e5"
+      ],
+      "label": "b"
+    },
+    {
+      "event": [
+        "e5",
+        "e3"
+      ],
+      "label": "b"
+    },
+    {
+      "event": [
+        "e5",
+        "e4"
+      ],
+      "label": "b"
+    },
+    {
+      "event": [
+        "e5",
+        "e5"
+      ],
+      "label": "b"
+    },
+    {
+      "event": [
+        null,
+        "e2"
+      ],
+      "label": null
+    }
+  ],
+  "transitions": [
+    {
+      "source": [
+        "q0",
+        "q0"
+      ],
+      "event": [
+        "e1",
+        "e1"
+      ],
+      "target": [
+        "q0",
+        "q0"
+      ]
+    },
+    {
+      "source": [
+        "q0",
+        "q0"
+      ],
+      "event": [
+        "e2",
+        null
+      ],
+      "target": [
+        "q0",
+        "q0"
+      ]
+    },
+    {
+      "source": [
+        "q0",
+        "q0"
+      ],
+      "event": [
+        "e3",
+        "e3"
+      ],
+      "target": [
+        "q1",
+        "q1"
+      ]
+    },
+    {
+      "source": [
+        "q0",
+        "q0"
+      ],
+      "event": [
+        "e3",
+        "e4"
+      ],
+      "target": [
+        "q1",
+        "q2"
+      ]
+    },
+    {
+      "source": [
+        "q0",
+        "q0"
+      ],
+      "event": [
+        "e4",
+        "e3"
+      ],
+      "target": [
+        "q2",
+        "q1"
+      ]
+    },
+    {
+      "source": [
+        "q0",
+        "q0"
+      ],
+      "event": [
+        "e4",
+        "e4"
+      ],
+      "target": [
+        "q2",
+        "q2"
+      ]
+    },
+    {
+      "source": [
+        "q0",
+        "q0"
+      ],
+      "event": [
+        null,
+        "e2"
+      ],
+      "target": [
+        "q0",
+        "q0"
+      ]
+    },
+    {
+      "source": [
+        "q0",
+        "q1"
+      ],
+      "event": [
+        "e2",
+        null
+      ],
+      "target": [
+        "q0",
+        "q1"
+      ]
+    },
+    {
+      "source": [
+        "q0",
+        "q1"
+      ],
+      "event": [
+        "e3",
+        "e5"
+      ],
+      "target": [
+        "q1",
+        "q1"
+      ]
+    },
+    {
+      "source": [
+        "q0",
+        "q1"
+      ],
+      "event": [
+        "e4",
+        "e5"
+      ],
+      "target": [
+        "q2",
+        "q1"
+      ]
+    },
+    {
+      "source": [
+        "q0",
+        "q2"
+      ],
+      "event": [
+        "e2",
+        null
+      ],
+      "target": [
+        "q0",
+        "q2"
+      ]
+    },
+    {
+      "source": [
+        "q1",
+        "q0"
+      ],
+      "event": [
+        "e5",
+        "e3"
+      ],
+      "target": [
+        "q1",
+        "q1"
+      ]
+    },
+    {
+      "source": [
+        "q1",
+        "q0"
+      ],
+      "event": [
+        "e5",
+        "e4"
+      ],
+      "target": [
+        "q1",
+        "q2"
+      ]
+    },
+    {
+      "source": [
+        "q1",
+        "q0"
+      ],
+      "event": [
+        null,
+        "e2"
+      ],
+      "target": [
+        "q1",
+        "q0"
+      ]
+    },
+    {
+      "source": [
+        "q1",
+        "q1"
+      ],
+      "event": [
+        "e5",
+        "e5"
+      ],
+      "target": [
+        "q1",
+        "q1"
+      ]
+    },
+    {
+      "source": [
+        "q2",
+        "q0"
+      ],
+      "event": [
+        null,
+        "e2"
+      ],
+      "target": [
+        "q2",
+        "q0"
+      ]
+    }
+  ],
+  "initial_states": [
+    [
+      "q0",
+      "q0"
+    ]
+  ],
+  "observable_labels": [
+    "a",
+    "b"
+  ]
+}

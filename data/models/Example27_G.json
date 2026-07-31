@@ -1,0 +1,15 @@
+{
+  "automaton_type": "FSA",
+  "states": ["0", "1", "2", "3", "4", "5"],
+  "events": ["a", "b", "c", "d"],
+  "transitions": [
+    {"source": "0", "event": "a", "target": "1"},
+    {"source": "1", "event": "b", "target": "2"},
+    {"source": "2", "event": "b", "target": "3"},
+    {"source": "3", "event": "c", "target": "2"},
+    {"source": "3", "event": "a", "target": "4"},
+    {"source": "3", "event": "a", "target": "5"},
+    {"source": "4", "event": "d", "target": "4"}
+  ],
+  "initial_states": ["0"]
+}

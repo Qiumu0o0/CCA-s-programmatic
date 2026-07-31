@@ -1,0 +1,15 @@
+{
+  "agent": "A2",
+  "events": [
+    "a",
+    "b"
+  ],
+  "alphabet": [
+    "gamma",
+    "zeta"
+  ],
+  "label_function": {
+    "a": "gamma",
+    "b": "zeta"
+  }
+}
