@@ -3,6 +3,31 @@
   "code-runner.ignoreSelection": true,
   "code-runner.fileDirectoryAsCwd": false,
   "markdown.math.enabled": true,
+  "latex-workshop.latex.outDir": "%DIR%",
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk-clean-root",
+      "command": "latexmk",
+      "args": [
+        "-pdf",
+        "-synctex=0",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-auxdir=%DIR%/.latex-build",
+        "-outdir=%DIR%",
+        "%DOC%"
+      ]
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk (aux files in .latex-build)",
+      "tools": [
+        "latexmk-clean-root"
+      ]
+    }
+  ],
+  "latex-workshop.latex.recipe.default": "first",
   "code-runner.executorMapByFileExtension": {
     ".py": "python -u"
   }
