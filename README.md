@@ -1,0 +1,1 @@
+To use the python script that **generating high-order observer** from an FSA and two agents, locate `src\order2_observer.py`. If you ran it in VScode, click the button of code-runner extension and follow the guidance.
