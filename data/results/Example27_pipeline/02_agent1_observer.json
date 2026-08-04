@@ -1,0 +1,93 @@
+{
+  "states": [
+    [
+      "0",
+      "1"
+    ],
+    [
+      "2"
+    ],
+    [
+      "3",
+      "4",
+      "5"
+    ],
+    [
+      "4"
+    ]
+  ],
+  "events": [
+    {
+      "event": "alpha",
+      "label": "alpha"
+    },
+    {
+      "event": "beta",
+      "label": "beta"
+    }
+  ],
+  "transitions": [
+    {
+      "source": [
+        "0",
+        "1"
+      ],
+      "event": "alpha",
+      "target": [
+        "2"
+      ]
+    },
+    {
+      "source": [
+        "2"
+      ],
+      "event": "alpha",
+      "target": [
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "source": [
+        "3",
+        "4",
+        "5"
+      ],
+      "event": "alpha",
+      "target": [
+        "2"
+      ]
+    },
+    {
+      "source": [
+        "3",
+        "4",
+        "5"
+      ],
+      "event": "beta",
+      "target": [
+        "4"
+      ]
+    },
+    {
+      "source": [
+        "4"
+      ],
+      "event": "beta",
+      "target": [
+        "4"
+      ]
+    }
+  ],
+  "initial_states": [
+    [
+      "0",
+      "1"
+    ]
+  ],
+  "observable_labels": [
+    "alpha",
+    "beta"
+  ]
+}

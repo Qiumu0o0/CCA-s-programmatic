@@ -1,0 +1,11 @@
+\contentsline {section}{\numberline {1}Regular Language and FAs}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Alphabets, words, and languages}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Regular languages}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Deterministic and nondeterministic finite automata}{3}{subsection.1.3}%
+\contentsline {section}{\numberline {2}LFSAs}{5}{section.2}%
+\contentsline {section}{\numberline {3}Concurrent Composition}{6}{section.3}%
+\contentsline {section}{\numberline {4}Observer}{7}{section.4}%
+\contentsline {section}{\numberline {5}High-order observer}{8}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Model of Agent}{9}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Pipeline to get the high-order observer}{9}{subsection.5.2}%
+\contentsline {section}{References}{11}{Item.19}%

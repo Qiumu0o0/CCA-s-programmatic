@@ -1,4 +1,5 @@
 \documentclass[11pt]{article}
+\synctex=1
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb}
@@ -19,12 +20,12 @@
 \tableofcontents
 \newpage
 
-\section{Regular Language and FA}
+\section{Regular Language and FAs}
 
 
 The following definitions summarize the background needed in this project.
 
-\subsection{Alphabet, words, and languages}
+\subsection{Alphabets, words, and languages}
 
 
 An \textbf{alphabet} is a finite, nonempty set of letters, usually denoted by $\Sigma$. A \textbf{word} over $\Sigma$ is a finite sequence of letters from $\Sigma$. More precisely, a word of length $n$ has the form
@@ -141,7 +142,7 @@ such that
 \begin{itemize}
 \item $w=xyz$;
 \item $|xy|\leq p$;
-\item $|y|\neq \epsilon$;
+\item $y\neq \epsilon$;
 \item $\forall i\in\mathbb{N}$, $xy^iz\in L$.
 
 \end{itemize}
@@ -164,7 +165,7 @@ where:
 \item $\Sigma$ is the input alphabet;
 \item $\delta:Q\times\Sigma\rightarrow Q$ is the transition function;
 \item $q_0\in Q$ is the initial state;
-\item $F\subseteq Q$ is the set of accepting states.
+\item $F\subseteq Q$ is the set of final states.
 
 \end{itemize}
 
@@ -194,7 +195,7 @@ where:
 \item $\Sigma$ is the input alphabet;
 \item $\delta:Q\times\Sigma\rightarrow 2^Q$ is the transition function;
 \item $Q_0\subseteq Q$ is the set of initial states;
-\item $F\subseteq Q$ is the set of accepting states.
+\item $F\subseteq Q$ is the set of final states.
 
 \end{itemize}
 
@@ -235,9 +236,10 @@ In this project, the underlying system is usually written as
 G=(Q,E,\delta,Q_0),
 \]
 
+\noindent
 where $E$ is an event alphabet, $\delta\subseteq Q\times E\times Q$ is a transition relation, and $Q_0\subseteq Q$ is a set of initial states. Accepting states are omitted because the project studies generated runs and state estimates rather than language acceptance. This transition-system form may be nondeterministic and may have multiple initial states. Adding an observation alphabet and a labeling function to $G$ produces the LFSA introduced in the next section.
 
-\section{LFSA}
+\section{LFSAs}
 
 
 According to Definition 1 in Zhang (2023), a \textbf{labeled finite-state automaton (LFSA)} is a sextuple
@@ -347,7 +349,7 @@ E_{iuo}=\{e\in E_i\mid\ell_i(e)=\epsilon\}.
 Their \textbf{concurrent composition} is the LFSA
 
 \[
-\operatorname{CCA}(\mathcal S_1,\mathcal S_2)
+\operatorname{CC}_{A}(\mathcal S_1,\mathcal S_2)
 =(Q',E',\delta',Q'_0,\Sigma,\ell'),
 \]
 
@@ -394,22 +396,31 @@ Therefore,
 \item For a synchronized observable event $(e_1,e_2)\in E'_o$,
 
 \[
-   \delta'((q_1,q_2),(e_1,e_2))
-   =\delta_1(q_1,e_1)\times\delta_2(q_2,e_2).
+   ((q_1,q_2),(e_1,e_2),(q'_1,q'_2))\in\delta'
+   \quad\Longleftrightarrow\quad
+   (q_1,e_1,q'_1)\in\delta_1
+   \text{ and }
+   (q_2,e_2,q'_2)\in\delta_2.
 \]
 
 \item For a left-component unobservable event $(e_1,\epsilon)\in E'_{uo}$,
 
 \[
-   \delta'((q_1,q_2),(e_1,\epsilon))
-   =\delta_1(q_1,e_1)\times\{q_2\}.
+   ((q_1,q_2),(e_1,\epsilon),(q'_1,q'_2))\in\delta'
+   \quad\Longleftrightarrow\quad
+   (q_1,e_1,q'_1)\in\delta_1
+   \text{ and }
+   q_2=q'_2.
 \]
 
 \item For a right-component unobservable event $(\epsilon,e_2)\in E'_{uo}$,
 
 \[
-   \delta'((q_1,q_2),(\epsilon,e_2))
-   =\{q_1\}\times\delta_2(q_2,e_2).
+   ((q_1,q_2),(\epsilon,e_2),(q'_1,q'_2))\in\delta'
+   \quad\Longleftrightarrow\quad
+   q_1=q'_1
+   \text{ and }
+   (q_2,e_2,q'_2)\in\delta_2.
 \]
 
 \item The labeling function is
@@ -429,17 +440,11 @@ Consequently, observable transitions can occur together only when they produce t
 If $\mathcal S_1=\mathcal S_2=\mathcal S$, then
 
 \[
-\operatorname{CCA}(\mathcal S,\mathcal S)
-=\operatorname{CCA}(\mathcal S)
+\operatorname{CC}_{A}(\mathcal S,\mathcal S)
+=\operatorname{CC}_{A}(\mathcal S)
 \]
 
 is called the \textbf{self-composition} of $\mathcal S$.
-
-% Based on the script of lfsa, I need create a new script to form a concurrent composition from two lfsa.
-
-
-% physically meaning?
-
 
 \section{Observer}
 
@@ -455,7 +460,7 @@ with observable event set $E_o$ and unobservable event set $E_{uo}$. Its \textbf
 \[
 \mathcal S_{\mathrm{obs}}
 =(Q_{\mathrm{obs}},\Sigma_{\mathrm{obs}},
-\delta_{\mathrm{obs}},q_{0,\mathrm{obs}}).
+\delta_{\mathrm{obs}},q_{0\ \mathrm{obs}}).
 \]
 
 Each observer state is a set of possible states of the original LFSA. The components of the observer are defined as follows.
@@ -485,7 +490,7 @@ Each observer state is a set of possible states of the original LFSA. The compon
 \item The initial observer state contains every state reachable from an original initial state through only unobservable events:
 
 \[
-   q_{0,\mathrm{obs}}
+   q_{0\ \mathrm{obs}}
    =\operatorname{UR}(Q_0).
 \]
 
@@ -506,11 +511,11 @@ Each observer state is a set of possible states of the original LFSA. The compon
 Because $\delta_{\mathrm{obs}}(X,a)$ is one uniquely determined subset of $Q$, the observer is deterministic even when the original LFSA is nondeterministic. For every observed word $\sigma\in\Sigma_{\mathrm{obs}}^*$,
 
 \[
-\delta_{\mathrm{obs}}(q_{0,\mathrm{obs}},\sigma)
+\delta_{\mathrm{obs}}(q_{0\ \mathrm{obs}},\sigma)
 =\mathcal M(\mathcal S,\sigma).
 \]
 
-Thus, after reading $\sigma$, the observer state is exactly the current-state estimate of the LFSA: it contains all and only the states in which $\mathcal S$ could be after producing $\sigma$. Although $Q_{\mathrm{obs}}=2^Q$ contains all subsets theoretically, an implementation usually constructs only the subsets reachable from $q_{0,\mathrm{obs}}$.
+Thus, after reading $\sigma$, the observer state is exactly the current-state estimate of the LFSA: it contains all and only the states in which $\mathcal S$ could be after producing $\sigma$. Although $Q_{\mathrm{obs}}=2^Q$ contains all subsets theoretically, an implementation usually constructs only the subsets reachable from $q_{0\ \mathrm{obs}}$.
 
 % I need a program that can generate the observer form an lfsa, and the output will be stored in format json
 
@@ -527,6 +532,7 @@ Consider an FSA
 G=(Q,E,\delta,Q_0)
 \]
 
+\noindent
 and an ordered sequence of agents $A_1,A_2,\ldots,A_n$. Agent $A_i$ observes an event trace $s\in L(G)$ through its labeling function
 
 \[

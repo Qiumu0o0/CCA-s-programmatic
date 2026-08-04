@@ -18,6 +18,18 @@
 - 校对已经写过的报告
 - 有时间的话找这个领域的其他论文读一读
 
-## Codex using tricks
+## 2026.08.04 (Tue)
+
+1. Revision
+   1. English grammar: plural
+   2. parentheses: in the parser, the parentheses are also needed to be parsed.
+   3. pumping lemma
+   4. empty set
+   5. **projection**: since we need relabel the event trace by $l_2$, so we need extract the left-component $e_1$, not the right-component $e_2$, which is the label of $l_1$
+2. integrating the pipeline
+   1. If used in Vscode: clicking the code runner button and the GUI will lead you to input the data needed.
+
+
+# Codex using tricks
 
 - 先 git init, 有了 git 环境之后，才能撤销 codex 的修改。
