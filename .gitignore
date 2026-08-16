@@ -1,3 +1,7 @@
 .latex-build/
 /hide
 /tmp
+.pytest_cache/
+**/__pycache__/
+*.py[cod]
+/output.json

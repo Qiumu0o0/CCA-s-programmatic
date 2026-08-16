@@ -1,0 +1,14 @@
+.git
+.agents
+.latex-build
+.pytest_cache
+.vscode
+**/__pycache__
+*.py[cod]
+docs
+hide
+tmp
+tests
+*.pdf
+*.synctex.gz
+output.json

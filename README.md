@@ -1,8 +1,108 @@
-# 离散事件系统中二阶观测器的程序化构造
+# 二阶观测器构造工具
 
 ## 项目简介
 
-本项目实现了离散事件系统中二阶观测器的自动化构造流程。通过输入特定格式的 DES 和 agents 的 json 文件，使用`src\order2_observer.py` 即可得到 json 格式的二阶观测器。
+本项目根据一个有限状态自动机（FSA）和两个智能体的观测配置，自动构造离散事件系统中的二阶观测器。
+
+## 输入与输出
+
+- 输入：FSA 模型、Agent 1 配置和 Agent 2 配置，均为 JSON 文件。
+- 输出：JSON 格式的二阶观测器，以及可选的中间结果。
+
+### 输入格式
+
+FSA 文件示例：
+
+```json
+{
+  "states": ["0", "1"],
+  "events": ["a"],
+  "transitions": [
+    {"source": "0", "event": "a", "target": "1"}
+  ],
+  "initial_states": ["0"]
+}
+```
+
+- `states`：状态集合。
+- `events`：事件集合。
+- `transitions`：转移关系；状态和事件必须已在对应集合中声明。
+- `initial_states`：非空初始状态集合。
+
+Agent 文件示例：
+
+```json
+{
+  "agent": "A1",
+  "events": ["a"],
+  "alphabet": ["alpha"],
+  "label_function": {"a": "alpha"}
+}
+```
+
+- `agent`：可选的智能体名称。
+- `events`：该智能体可观测的 FSA 事件。
+- `alphabet`：输出标签集合。
+- `label_function`：为 `events` 中每个事件指定标签；标签必须属于 `alphabet`。
+
+未列入 Agent `events` 的 FSA 事件会被视为不可观测事件。完整示例位于 `data/models/` 和 `data/agents/`。
+
+## 快速开始
+
+要求 Python 3.10 或更高版本。项目仅使用 Python 标准库。
+
+```bash
+python src/order2_observer.py \
+  data/models/Example27_G.json \
+  data/agents/Example27_A1.json \
+  data/agents/Example27_A2.json \
+  output.json
+```
+
+Windows 用户也可将 `python` 替换为 `py -3`。运行成功后，结果保存在 `output.json`。
+
+保存各阶段中间结果：
+
+```bash
+python src/order2_observer.py \
+  data/models/Example27_G.json \
+  data/agents/Example27_A1.json \
+  data/agents/Example27_A2.json \
+  output.json \
+  --intermediates-dir intermediate-results
+```
+
+## 使用 Docker
+
+先安装并启动 Docker Desktop，然后在项目根目录构建镜像：
+
+```powershell
+docker build -t observer .
+```
+
+运行仓库中的 Example27：
+
+```powershell
+docker run --rm -v "${PWD}:/data" observer `
+  /data/data/models/Example27_G.json `
+  /data/data/agents/Example27_A1.json `
+  /data/data/agents/Example27_A2.json `
+  /data/output.json
+```
+
+`-v` 将当前项目目录挂载到容器的 `/data`。运行完成后，结果保存在项目根目录的 `output.json`。
+
+使用自己的数据时，替换命令中的三个输入文件路径和输出文件名即可。修改 Dockerfile 或源代码后，需要重新执行构建命令。
+
+## 运行测试
+
+安装 pytest 后运行：
+
+```bash
+python -m pytest
+```
+
+该测试会重新计算 Example27，并与仓库中的预期结果自动比较。
 
 ## 理论背景
 
@@ -104,7 +204,3 @@ $$Obs_{A_1\leftarrow A_2}(G)=Obs_{\ell_2}\!\left(CC^{G,Obs_{A_1}}_{A_1\to A_2}\r
 ## 例子
 
 ![alt text](tmp/pdfs/example27-109.png)
-
-## How to run
-
-To use the python script that **generating high-order observer** from an FSA and two agents, locate `src\order2_observer.py`. If you ran it in VScode, click the button of code-runner extension and follow the guidance.
