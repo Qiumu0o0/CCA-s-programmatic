@@ -12,11 +12,11 @@
 \setbeamertemplate{navigation symbols}{}
 \setbeamersize{text margin left=0.55cm,text margin right=0.55cm}
 
-\title{Programmatic Modeling of Concurrent Composition\\and High-Order Observers}
-\subtitle{Labeled Finite-State Automata}
+\title{Programmatic Modeling of High-Order Observers}
+\subtitle{}
 \author{Zixi Wang}
 \institute{Xi'an Jiaotong University}
-\date{Summer Research Presentation}
+\date{}
 
 \begin{document}
 
@@ -26,6 +26,18 @@
     \vspace{-0.45cm}
     \includegraphics[width=0.14\linewidth]{assets/xjtu_logo.png}
   \end{center}
+\end{frame}
+
+\begin{frame}{Contents}
+  \begin{enumerate}
+    \item Problem Setting
+    \item Basic Knowledge
+    \item Order-2 Observer Pipeline
+    \item Theorem
+    \item Example
+    \item Complexity and Summary
+    \item Future Work
+  \end{enumerate}
 \end{frame}
 
 \begin{frame}{Problem Setting}
@@ -38,7 +50,18 @@
     \item Agent $A_2$ infers the possible state estimates held by Agent $A_1$.
   \end{itemize}
 
-  \vspace{0.35cm}
+  \vspace{0.18cm}
+  \textbf{Models}
+  \[
+    G=(Q,E,\delta,Q_0),
+    \qquad
+    A_i=(E_i,\Sigma_i,\ell_i),
+  \]
+  where $E_i\subseteq E$ and
+  $\ell_i:E\rightarrow\Sigma_i\cup\{\epsilon\}$ maps events outside $E_i$
+  to $\epsilon$.
+
+  \vspace{0.18cm}
   \begin{block}{Target computation}
     For an observation $\beta$ of Agent $A_2$, compute
     \[
@@ -48,81 +71,154 @@
   \end{block}
 \end{frame}
 
-\begin{frame}{LFSA Observer and Concurrent Composition}
+\begin{frame}{Labeled Finite-State Automaton}
   \small
-  \textbf{Labeled finite-state automaton}
+  An LFSA is a sextuple
   \[
     S=(Q,E,\delta,Q_0,\Sigma,\ell),
-    \qquad \ell:E\rightarrow\Sigma\cup\{\epsilon\}.
   \]
-  The labeling function models what an agent observes.
-
-  \vspace{0.18cm}
-  \textbf{Observer}
+  where $Q$ is the state set, $E$ is the event alphabet,
+  $\delta:Q\times E\rightarrow 2^Q$ is the transition function,
+  $Q_0\subseteq Q$ is the initial-state set, $\Sigma$ is the output
+  alphabet, and
   \[
-    \delta_{\mathrm{obs}}(q_{0,\mathrm{obs}},\alpha)=M(S,\alpha)\subseteq Q.
+    \ell:E\rightarrow\Sigma\cup\{\epsilon\}
   \]
-  Each observer state is one current-state estimate.
+  is the labeling function.
 
-  \vspace{0.18cm}
-  \textbf{Concurrent composition}
+  For an observed word $\alpha$, the current-state estimate is
   \[
-    CC(S_1,S_2)
+    M(S,\alpha)=\{q\in Q:\exists q_0\in Q_0,\exists s\in E^*,
+    \ \ell(s)=\alpha,\ q\in\delta(q_0,s)\}.
   \]
-  It synchronizes transitions with equal observable labels and interleaves
-  unobservable transitions.
   \vfill
-  {\tiny Source: Zhang, \textit{Annual Reviews in Control}, 56, 100902, 2023.}
+  {\tiny Source: Zhang, \textit{Annual Reviews in Control}, 56, 100902, 2023, Definition 1.}
+\end{frame}
+
+\begin{frame}{Observer}
+  \small
+  For $S=(Q,E,\delta,Q_0,\Sigma,\ell)$, its observer is
+  \[
+    S_{\mathrm{obs}}=(Q_{\mathrm{obs}},\Sigma_{\mathrm{obs}},
+    \delta_{\mathrm{obs}},q_{0,\mathrm{obs}}),
+  \]
+  where
+  \[
+    Q_{\mathrm{obs}}=2^Q,
+    \qquad
+    \Sigma_{\mathrm{obs}}=\ell(E)\setminus\{\epsilon\}.
+  \]
+  Define the unobservable reach
+  \[
+    UR(X)=\bigcup_{q\in X}\ \bigcup_{s\in E_{uo}^*}\delta(q,s).
+  \]
+  Then
+  \[
+    q_{0,\mathrm{obs}}=UR(Q_0),
+  \]
+  \[
+    \delta_{\mathrm{obs}}(X,a)=UR\!\left(
+    \bigcup_{q\in X}\ \bigcup_{\substack{e\in E_o\\\ell(e)=a}}
+    \delta(q,e)\right).
+  \]
+  \vfill
+  {\tiny Source: Zhang, \textit{Annual Reviews in Control}, 56, 100902, 2023, Definition 3.}
+\end{frame}
+
+\begin{frame}{Concurrent Composition}
+  \scriptsize
+  For $S_i=(Q_i,E_i,\delta_i,Q_{0i},\Sigma,\ell_i)$, $i=1,2$, define
+  \[
+    CC_A(S_1,S_2)=(Q',E',\delta',Q'_0,\Sigma,\ell'),
+  \]
+  \[
+    Q'=Q_1\times Q_2,
+    \qquad Q'_0=Q_{01}\times Q_{02}.
+  \]
+  Observable events synchronize when their labels agree:
+  \[
+    E'_o=\{(e_1,e_2)\in E_{1o}\times E_{2o}:
+    \ell_1(e_1)=\ell_2(e_2)\}.
+  \]
+  Unobservable events interleave:
+  \[
+    E'_{uo}=\{(e_1,\epsilon):e_1\in E_{1uo}\}
+    \cup\{(\epsilon,e_2):e_2\in E_{2uo}\},
+    \qquad E'=E'_o\cup E'_{uo}.
+  \]
+  The transition relation satisfies
+  \[
+    ((q_1,q_2),(e_1,e_2),(q'_1,q'_2))\in\delta'
+    \iff (q_1,e_1,q'_1)\in\delta_1\land(q_2,e_2,q'_2)\in\delta_2,
+  \]
+  with the unchanged component retained for each unobservable interleaving.
+  Moreover,
+  \[
+    \ell'((e_1,e_2))=\ell_1(e_1)=\ell_2(e_2),
+    \qquad \ell_i(\epsilon)=\epsilon.
+  \]
+  \vfill
+  {\tiny Source: Zhang, \textit{Annual Reviews in Control}, 56, 100902, 2023, Definition 2.}
 \end{frame}
 
 \begin{frame}{Order-2 Observer Pipeline}
   \small
-  \begin{tabular}{@{}cll@{}}
-    \toprule
-    \textbf{Stage} & \textbf{Transformation} & \textbf{Program} \\
-    \midrule
-    1 & Add Agent $A_1$ labels to $G$ & \texttt{fa\_agent\_to\_lfsa.py} \\
-    2 & Build $A_1$'s observer & \texttt{observer.py} \\
-    3 & Compose the system and observer & \texttt{CC.py} \\
-    4 & Recover the underlying event system & \texttt{lfsa\_to\_fa.py} \\
-    5 & Replace labels with Agent $A_2$'s view & \texttt{fa\_agent\_to\_lfsa.py} \\
-    6 & Build $A_2$'s observer & \texttt{observer.py} \\
-    \bottomrule
-  \end{tabular}
-  \vspace{0.45cm}
-  \begin{block}{Programmatic data flow}
-    \[
-      (G,A_1,A_2)\longrightarrow Obs_{A_1}
-      \longrightarrow CC\longrightarrow Obs_{A_1\leftarrow A_2}(G).
-    \]
-  \end{block}
+  \textbf{1. Construct Agent $A_1$'s observer}
+  \[
+    G+A_1\longrightarrow G_{A_1},
+    \qquad Obs_{\ell_1}(G)=:Obs_{A_1}.
+  \]
+  \texttt{fa\_agent\_to\_lfsa.py} \quad \texttt{observer.py}
+
+  \vspace{0.22cm}
+  \textbf{2. Compose and change the observation perspective}
+  \[
+    CC_{\ell_1}(G_{A_1},Obs_{A_1})
+    \xrightarrow{\ (e_1,e_2)\mapsto e_1,\ \ell_1\mapsto\ell_2\ }
+    CC^{G,Obs}_{A_1\rightarrow A_2}.
+  \]
+  \texttt{CC.py} \quad \texttt{lfsa\_to\_fa.py} \quad
+  \texttt{fa\_agent\_to\_lfsa.py}
+
+  \vspace{0.22cm}
+  \textbf{3. Construct the order-2 observer}
+  \[
+    Obs_{\ell_2}\!\left(CC^{G,Obs}_{A_1\rightarrow A_2}\right)
+    =:Obs_{A_1\leftarrow A_2}(G).
+  \]
+  \texttt{observer.py}
+
+  \vfill
+  {\tiny Source: Zhang et al., \textit{High-Order Observers and High-Order State-Estimation-Based Properties}, Slide 35.}
 \end{frame}
 
-\begin{frame}{Theorem 25 and Example 27}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.47\textwidth}
-      \small
-      If reading $\beta$ reaches the order-2 observer state
-      \[
-        \{(q_1,X_1),\ldots,(q_n,X_n)\},
-      \]
-      then Theorem 25 gives
-      \[
-        M_{A_1\leftarrow A_2}(G,\beta)
-        =\{X_1,\ldots,X_n\}.
-      \]
-      The second components are precisely the possible estimates of Agent $A_1$.
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\linewidth,trim=20 12 20 42,clip]{assets/example27_reference.png}
-      \vspace{0.12cm}
+\begin{frame}{Theorem}
+  If reading $\beta$ leads the order-2 observer to the state
+  \[
+    \{(q_1,X_1),\ldots,(q_n,X_n)\},
+  \]
+  then
+  \[
+    M_{A_1\leftarrow A_2}(G,\beta)=\{X_1,\ldots,X_n\}.
+  \]
 
-      \scriptsize
-      The implementation reproduces the published five-state,
-      five-transition order-2 observer.
-    \end{column}
-  \end{columns}
+  \vspace{0.35cm}
+  Each pair $(q_i,X_i)$ records a possible actual state $q_i$ and a
+  corresponding estimate $X_i$ held by Agent $A_1$. Therefore, projecting
+  the second components gives Agent $A_2$'s inference about Agent $A_1$.
+
+  \vfill
+  {\tiny Source: Zhang et al., \textit{High-Order Observers and High-Order State-Estimation-Based Properties}, Theorem 25.}
+\end{frame}
+
+\begin{frame}{Example}
+  \centering
+  \includegraphics[width=0.88\linewidth]{assets/examplevector.pdf}
+  \vspace{0.18cm}
+
+  \small
+  The implementation reproduces the published five-state,
+  five-transition order-2 observer.
   \vfill
   {\tiny Reference figure: Zhang et al., \textit{High-Order Observers and High-Order State-Estimation-Based Properties}, Example 27.}
 \end{frame}
@@ -144,7 +240,15 @@
   \begin{itemize}
     \item The programs implement LFSA conversion, observers, and concurrent composition.
     \item The resulting order-2 observer computes Agent $A_2$'s possible inferences about Agent $A_1$.
-    \item Example 27 provides an end-to-end validation case.
+    \item The published example provides an end-to-end validation case.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Future Work}
+  \begin{itemize}
+    \item Verify properties of Agent $A_2$'s inference about Agent $A_1$'s state estimates.
+    \item Extend the pipeline to construct order-$n$ observers.
+    \item Develop visualization tools for generated observers and intermediate models.
   \end{itemize}
 \end{frame}
 
