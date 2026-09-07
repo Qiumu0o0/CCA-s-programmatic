@@ -10,7 +10,7 @@
       "command": "latexmk",
       "args": [
         "-pdf",
-        "-synctex=0",
+        "-synctex=1",
         "-interaction=nonstopmode",
         "-file-line-error",
         "-auxdir=%DIR%/.latex-build",
