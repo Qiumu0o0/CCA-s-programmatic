@@ -346,6 +346,7 @@ Thus, an LFSA distinguishes an internal event sequence $s$ from its observable l
 
 \section{Concurrent Composition}
 
+\subsection{Definition}
 
 According to Definition 2 in Zhang (2023), consider two LFSAs with the same output alphabet $\Sigma$:
 
@@ -451,8 +452,6 @@ where the labeling functions are extended by $\ell_1(\epsilon)=\ell_2(\epsilon)=
 
 \end{enumerate}
 
-Consequently, observable transitions can occur together only when they produce the same label, whereas unobservable transitions can occur separately without changing the other component's state. The concurrent composition therefore collects pairs of runs from $\mathcal S_1$ and $\mathcal S_2$ that generate the same observable label sequence.
-
 If $\mathcal S_1=\mathcal S_2=\mathcal S$, then
 
 \[
@@ -462,8 +461,32 @@ If $\mathcal S_1=\mathcal S_2=\mathcal S$, then
 
 is called the \textbf{self-composition} of $\mathcal S$.
 
+\subsection{Physical Meaning}
+
+Consequently, observable transitions can occur together only when they produce the same label, whereas unobservable transitions can occur separately without changing the other component's state. The concurrent composition therefore collects pairs of runs from $\mathcal S_1$ and $\mathcal S_2$ that generate the same observable label sequence.
+
+\subsection{Applications}
+
+This interpretation makes concurrent composition a general verification tool for discrete-event systems. By pairing runs that are indistinguishable under observation, it reduces questions about detectability, diagnosability, opacity, and related state/event inference or concealment properties to checking property-specific structural conditions on the reachable part of the composed system.
+
+\paragraph{Example---strong detectability.}
+After sufficiently many observations, is the current state uniquely known? Self-composition tracks pairs of indistinguishable runs. If a reachable cycle contains a state $(q_1,q_2)$ with $q_1\neq q_2$, ambiguity can persist indefinitely; therefore, strong detectability fails.
+
+\paragraph{Example---fault diagnosability.}
+Can a fault always be confirmed after finitely many observations? Concurrent composition pairs a faulty run with a fault-free run that produces the same observation. If a reachable cycle maintains such a pair, the ambiguity can persist indefinitely; therefore, the fault is not diagnosable.
+
+\paragraph{Example---current-state opacity.}
+Can an observer determine that the current state is secret? Suppose a secret state $q_s$ and a non-secret state $q_n$ can both generate the same observation $a$. Concurrent composition tracks the indistinguishable pair $(q_s,q_n)$. Because the observation is consistent with a non-secret state, the secret remains opaque. If no such non-secret counterpart is reachable, current-state opacity fails.
+
+\paragraph{Example---event inference.}
+Can an observer determine whether a particular event has occurred? Concurrent composition pairs a run containing the event with a run not containing it but producing the same observation. If such a pair is reachable, the event cannot be inferred uniquely; otherwise, its occurrence is identifiable.
+
+\paragraph{Example---secret-event opacity.}
+Can the occurrence of a secret event be concealed? Concurrent composition pairs a run containing the secret event with a run containing no secret event but producing the same observation. If every secret run has such an indistinguishable non-secret counterpart, the secret event remains opaque; if a secret run has none, opacity fails.
+
 \section{Observer}
 
+\subsection{Definition}
 
 According to Definition 3 in Zhang (2023), consider an LFSA
 
@@ -531,57 +554,52 @@ Because $\delta_{\mathrm{obs}}(X,a)$ is one uniquely determined subset of $Q$, t
 =\mathcal M(\mathcal S,\sigma).
 \]
 
+\subsection{Physical Meaning}
+
 Thus, after reading $\sigma$, the observer state is exactly the current-state estimate of the LFSA: it contains all and only the states in which $\mathcal S$ could be after producing $\sigma$. Although $Q_{\mathrm{obs}}=2^Q$ contains all subsets theoretically, an implementation usually constructs only the subsets reachable from $q_{0\ \mathrm{obs}}$.
 
-% I need a program that can generate the observer form an lfsa, and the output will be stored in format json
+\subsection{Applications}
 
+Observer applications include current-state estimation, detectability verification, fault diagnosis, opacity analysis, and state-based supervisory control under partial observation.
 
-% physically meaning?
+\paragraph{Example---current-state estimation.}
+After observing a word $\sigma$, which states may the system currently occupy? Starting from its initial state, the observer follows the transitions labeled by $\sigma$. The reached observer state $\mathcal M(\mathcal S,\sigma)$ contains exactly all possible current states of the original system.
+
+\paragraph{Example---detectability verification.}
+Can the current state eventually be determined uniquely from observations? The observer verifies this by examining its reachable state estimates. Persistent reachable estimates containing multiple states reveal observational ambiguity and, depending on the chosen detectability notion, may violate detectability.
+
+\paragraph{Example---fault diagnosis.}
+Can the occurrence of an unobservable fault be determined after finitely many observations? Using states augmented with fault information, the observer tracks fault-free and faulty possibilities. An estimate containing both possibilities is uncertain; persistent uncertainty means that the fault is not diagnosable.
+
+\begin{quote}
+\textit{Note on fault diagnosis.}
+\begin{enumerate}
+\item \textit{What is a fault?} A fault is an event, usually unobservable, representing equipment or component failure.
+\item \textit{What is a fault-augmented system?} It combines the plant with a memory that records whether a fault has occurred.
+\begin{itemize}
+\item \textit{What mathematical structure is used to describe the memory?} A two-state automaton $\{N,F\}$, where $N\xrightarrow{f}F$ and $F$ remains $F$.
+\end{itemize}
+\item \textit{What are plant states and fault statuses?} The plant state $q$ is the current system state, while $N$ or $F$ records whether a fault has occurred. Thus, an augmented state is $(q,N)$ or $(q,F)$.
+\end{enumerate}
+\end{quote}
+
+\paragraph{Example---opacity analysis.}
+Can an external observer determine that the system is in a secret state? Let $Q_S\subseteq Q$ be the secret-state set. If a reachable observer state $X$ satisfies $X\subseteq Q_S$, the observation reveals the secret; therefore, current-state opacity fails.
+
+\paragraph{Example---state-based supervisory control.}
+Which controllable events can be enabled safely under partial observation? For each observer state, a supervisor considers every possible current state represented by that estimate and enables only decisions that satisfy the control requirement for all of them.
+
+\begin{quote}
+\textit{Note on state-based supervisory control.}
+\begin{itemize}
+\item \textit{What is a controllable event?} The event set is partitioned as $E=E_c\mathbin{\dot\cup}E_{uc}$. Events in $E_c$ may be disabled by the supervisor, whereas events in $E_{uc}$ cannot.
+\item \textit{What is a forbidden state?} Forbidden states form a predefined set $Q_{\mathrm{bad}}\subseteq Q$ containing states that the controlled system must avoid.
+\end{itemize}
+\end{quote}
 
 \section{High-order observer}
 
-
-Consider an FSA
-
-\[
-G=(Q,E,\delta,Q_0)
-\]
-
-\noindent
-and an ordered sequence of agents $A_1,A_2,\ldots,A_n$. Agent $A_i$ observes an event trace $s\in L(G)$ through its labeling function
-
-\[
-\ell_i:E\rightarrow\Sigma_i\cup\{\epsilon\}.
-\]
-
-An ordinary observer gives an agent's estimate of the current state of $G$. This is an \textbf{order-1 estimate}:
-
-\[
-\mathcal M_{A_1}(G,\alpha)
-=\{q\in Q\mid
-\exists q_0\in Q_0,\ 
-\exists s\in L(G):
-\ell_1(s)=\alpha
-\text{ and }
-q\in\delta(q_0,s)\}
-\in 2^Q.
-\]
-
-A high-order estimate describes one agent's estimate of another agent's estimate. For example, after $A_2$ observes $\beta\in\ell_2(L(G))$, its order-2 estimate of what $A_1$ may know is
-
-\[
-\mathcal M_{A_1\leftarrow A_2}(G,\beta)
-=
-\{\mathcal M_{A_1}(G,\ell_1(s))
-\mid
-s\in L(G),\ \ell_2(s)=\beta\}
-\in 2^{2^Q}.
-\]
-
-Thus, $A_1$ estimates the current state of $G$, whereas $A_2$ estimates the possible state estimates held by $A_1$. The arrow in $A_1\leftarrow A_2$ indicates that the final inference is made by $A_2$ about $A_1$.
-
 \subsection{Model of Agent}
-
 
 Consider an FSA
 
@@ -637,6 +655,85 @@ G_{A_i}=(Q,E,\delta,Q_0,\Sigma_i,\ell_i).
 
 The agent does not change the states, events, or transitions of $G$; it only determines how the events are observed. Consequently, different agents may produce different LFSAs from the same FSA because they may have different observable event sets, alphabets, or labeling functions.
 
+\subsection{Definition}
+
+Consider an FSA
+
+\[
+G=(Q,E,\delta,Q_0)
+\]
+
+\noindent
+and an ordered sequence of agents $A_1,A_2,\ldots,A_n$. Agent $A_i$ observes an event trace $s\in L(G)$ through its labeling function
+
+\[
+\ell_i:E\rightarrow\Sigma_i\cup\{\epsilon\}.
+\]
+
+An ordinary observer gives an agent's estimate of the current state of $G$. This is an \textbf{order-1 estimate}:
+
+\[
+\mathcal M_{A_1}(G,\alpha)
+=\{q\in Q\mid
+\exists q_0\in Q_0,\ 
+\exists s\in L(G):
+\ell_1(s)=\alpha
+\text{ and }
+q\in\delta(q_0,s)\}
+\in 2^Q.
+\]
+
+A high-order estimate describes one agent's estimate of another agent's estimate. For example, after $A_2$ observes $\beta\in\ell_2(L(G))$, its order-2 estimate of what $A_1$ may know is
+
+\[
+\mathcal M_{A_1\leftarrow A_2}(G,\beta)
+=
+\{\mathcal M_{A_1}(G,\ell_1(s))
+\mid
+s\in L(G),\ \ell_2(s)=\beta\}
+\in 2^{2^Q}.
+\]
+
+\subsection{Physical Meaning}
+
+Thus, $A_1$ estimates the current state of $G$, whereas $A_2$ estimates the possible state estimates held by $A_1$. The arrow in $A_1\leftarrow A_2$ indicates that the final inference is made by $A_2$ about $A_1$.
+
+\subsection{Applications}
+
+High-order observers provide a systematic way to solve \textbf{epistemic inference problems} in discrete-event systems. They can determine what one agent knows about another agent's state estimate, verify higher-order opacity and information-flow privacy, analyze epistemic detectability and diagnosability, and support decentralized supervisory-control decisions that depend on nested knowledge.
+
+\paragraph{Example---high-order opacity.}
+Can agent $A_2$ determine that agent $A_1$ knows the system is in a secret state? The order-2 observer tracks all state estimates that $A_1$ may hold from $A_2$'s viewpoint. If a reachable order-2 estimate contains only $A_1$-estimates that lie entirely within the secret-state set, then $A_2$ knows that $A_1$ knows the secret; therefore, high-order opacity fails.
+
+\paragraph{Example---information-flow privacy.}
+Can agent $A_2$ infer private information available to agent $A_1$? The high-order observer tracks the estimates that $A_1$ may hold after each observation of $A_2$. If a reachable high-order estimate reveals only one possible private value, then $A_2$ can infer that value; therefore, information-flow privacy fails.
+
+\begin{quote}
+\textit{Note on information-flow privacy.}
+\begin{itemize}
+\item \textit{What is private information?} It is an attribute of $A_1$'s state estimate that should not be uniquely inferred by $A_2$, such as whether the estimate reveals a secret state, event, or control decision.
+\item \textit{How is private information represented?} Let $h:2^Q\rightarrow V$, where $V$ is the set of possible private values; for example, $V=\{\text{secret},\text{non-secret}\}$.
+\item \textit{What does $A_1$ hide?} Agent $A_1$ hides the private attribute value $h(X)$ associated with its state estimate $X$, rather than necessarily hiding the state estimate itself.
+\end{itemize}
+\end{quote}
+
+\paragraph{Example---epistemic detectability.}
+Can agent $A_2$ determine that agent $A_1$ knows the current state uniquely? The order-2 observer tracks all estimates that $A_1$ may hold from $A_2$'s viewpoint. If every estimate in a reachable order-2 state is the same singleton, then $A_2$ knows that $A_1$ knows the current state.
+
+\begin{quote}
+\textit{Note on the same singleton.}
+If a reachable order-2 state is $\{X_1,\ldots,X_k\}$, then ``every estimate is the same singleton'' means
+\[
+X_1=\cdots=X_k=\{q\}
+\]
+for some $q\in Q$. Thus, all possible estimates held by $A_1$ agree on exactly one current state.
+\end{quote}
+
+\paragraph{Example---epistemic diagnosability.}
+Can agent $A_2$ determine that agent $A_1$ has diagnosed a fault? First augment the plant states with a fault status. The order-2 observer then tracks all augmented-state estimates that $A_1$ may hold. If every estimate in a reachable order-2 state contains only states marked as faulty, then $A_2$ knows that $A_1$ has diagnosed the fault.
+
+\paragraph{Example---decentralized supervisory control.}
+Can agent $A_2$ safely enable an event whose decision depends on what agent $A_1$ knows? The high-order observer collects all estimates that $A_1$ may hold from $A_2$'s viewpoint. Agent $A_2$ enables the event only if the required control condition holds for every such estimate; otherwise, enabling it may violate the specification.
 
 \subsection{Pipeline to get the high-order observer}
 
@@ -764,6 +861,16 @@ current composition onto the original event component, apply the next
 agent's labeling function, and construct another observer. Each new
 observer adds one level of state-estimate nesting. In the general case,
 constructing an order-$n$ observer has $n$-EXPTIME complexity.
+
+\section{Future Work}
+
+Future work will focus on the following directions:
+
+\begin{itemize}
+\item automate the recursive construction of order-$n$ observers;
+\item add verification procedures for high-order opacity, detectability, and diagnosability;
+\item develop benchmark examples and automated correctness tests;
+\end{itemize}
 
 
 \addcontentsline{toc}{section}{References}
