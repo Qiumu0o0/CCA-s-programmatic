@@ -56,21 +56,21 @@ python src/order2_observer.py \
   data/models/Example27_G.json \
   data/agents/Example27_A1.json \
   data/agents/Example27_A2.json \
-  output.json
+  .\output.json
 ```
 
 Windows 用户也可将 `python` 替换为 `py -3`。运行成功后，结果保存在 `output.json`。
 
-保存各阶段中间结果：
+<!-- 保存各阶段中间结果：
 
 ```bash
 python src/order2_observer.py \
   data/models/Example27_G.json \
   data/agents/Example27_A1.json \
   data/agents/Example27_A2.json \
-  output.json \
+  .\output.json \
   --intermediates-dir intermediate-results
-```
+``` -->
 
 ## 使用 Docker
 
