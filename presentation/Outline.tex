@@ -862,6 +862,57 @@ agent's labeling function, and construct another observer. Each new
 observer adds one level of state-estimate nesting. In the general case,
 constructing an order-$n$ observer has $n$-EXPTIME complexity.
 
+\section{Complexity}
+
+Let
+
+\[
+n=|Q|,
+\qquad
+k=|E|,
+\qquad
+m=\max\{|\ell_1(E_o)|,|\ell_2(E_o)|\},
+\]
+
+and measure the size of an automaton $A$ by
+
+\[
+|A|=|Q_A|+|\delta_A|.
+\]
+
+The order-1 observer has at most $2^n$ states. Since it is deterministic
+and has at most $m$ outgoing transitions at each state,
+
+\[
+|\operatorname{Obs}_{A_1}|=O(m2^n).
+\]
+
+The concurrent composition has states $(q,X)$, where $q\in Q$ and
+$X\subseteq Q$, so it has at most $n2^n$ states. To bound its transitions,
+choose a source state $(q,X)$, an event $e_1\in E$, and a successor
+$q'\in\delta(q,e_1)$. There are at most $n2^n$, $k$, and $n$ choices,
+respectively. Once these are fixed, the deterministic observer determines
+at most one successor estimate $X'$. Hence
+
+\[
+|CC|=O\!\left((n2^n)kn\right)
+=O(kn^2 2^n).
+\]
+
+Finally, the input to the order-2 observer has at most $n2^n$ states.
+Applying the powerset construction again gives
+
+\[
+|\operatorname{Obs}_{A_1\leftarrow A_2}|
+=O\!\left(m2^{n2^n}\right).
+\]
+
+These are worst-case bounds. The implementation constructs only reachable
+states and transitions. The observer and concurrent-composition bounds follow
+the size analysis in Zhang~\cite{zhang2023concurrent}; the repeated powerset
+construction agrees with the $n$-EXPTIME bound for order-$n$ observers in
+Zhang et al.~\cite{zhang2024highorder}.
+
 \section{Future Work}
 
 Future work will focus on the following directions:

@@ -1,0 +1,293 @@
+            Programmatic Modeling of High-Order Observers
+
+                                                     Zixi Wang
+
+                                                Xi’an Jiaotong University
+
+
+
+
+Zixi Wang                                                                   Xi’an Jiaotong University
+Programmatic Modeling of High-Order Observers                                                 1 / 11
+Contents
+
+
+
+
+       1    Problem Setting
+       2    Basic Knowledge
+       3    Order-2 Observer Pipeline
+       4 Theorem
+       5 Example
+
+       6    Complexity and Summary
+       7    Future Work
+
+
+
+
+Zixi Wang                                       Xi’an Jiaotong University
+Programmatic Modeling of High-Order Observers                     2 / 11
+Problem Setting
+
+  Consider a finite-state system G observed by two agents.
+
+       • Agent A1 estimates the current state of G from its observations.
+       • Agent A2 has a different observation of the same execution.
+       • Agent A2 infers the possible state estimates held by Agent A1 .
+
+  Models
+                                     G = (Q, E , δ, Q0 ),   Ai = (Ei , Σi , ℓi ),
+  where Ei ⊆ E and ℓi : E → Σi ∪ {ϵ} maps events outside Ei to ϵ.
+
+  Target computation
+  For an observation β of Agent A2 , compute
+
+                       MA1 ←A2 (G, β) = {M1 (G, ℓ1 (s)) : s ∈ L(G), ℓ2 (s) = β}.
+
+
+Zixi Wang                                                                           Xi’an Jiaotong University
+Programmatic Modeling of High-Order Observers                                                         3 / 11
+Labeled Finite-State Automaton
+
+
+  An LFSA is a sextuple
+                                                       S = (Q, E , δ, Q0 , Σ, ℓ),
+  where Q is the state set, E is the event alphabet, δ : Q × E → 2Q is the transition
+  function, Q0 ⊆ Q is the initial-state set, Σ is the output alphabet, and
+
+                                                             ℓ : E → Σ ∪ {ϵ}
+
+  is the labeling function.
+  For an observed word α, the current-state estimate is
+
+                   M(S, α) = {q ∈ Q : ∃q0 ∈ Q0 , ∃s ∈ E ∗ , ℓ(s) = α, q ∈ δ(q0 , s)}.
+
+
+
+  Source: Zhang, Annual Reviews in Control, 56, 100902, 2023, Definition 1.
+
+
+
+
+Zixi Wang                                                                           Xi’an Jiaotong University
+Programmatic Modeling of High-Order Observers                                                         4 / 11
+Observer
+
+  For S = (Q, E , δ, Q0 , Σ, ℓ), its observer is
+
+                                                Sobs = (Qobs , Σobs , δobs , q0obs ),
+
+  where
+                                             Qobs = 2Q ,                Σobs = ℓ(E ) \ {ϵ}.
+  Define the unobservable reach
+                                                                     [ [
+                                                   UR(X ) =                      δ(q, s).
+                                                                            ∗
+                                                                     q∈X s∈Euo
+
+
+  Then
+                                                            q0obs = UR(Q0 ),
+                                                                       
+                                                             [ [
+                                         δobs (X , a) = UR      δ(q, e) .
+                                                                       
+                                                                         q∈X    e∈Eo
+                                                                               ℓ(e)=a
+
+  Source: Zhang, Annual Reviews in Control, 56, 100902, 2023, Definition 3.
+
+
+Zixi Wang                                                                                     Xi’an Jiaotong University
+Programmatic Modeling of High-Order Observers                                                                   5 / 11
+Concurrent Composition
+  For Si = (Qi , Ei , δi , Q0i , Σ, ℓi ), i = 1, 2, define
+
+                                                                          ′    ′   ′   ′      ′
+                                                 CCA (S1 , S2 ) = (Q , E , δ , Q0 , Σ, ℓ ),
+
+                                                   ′                           ′
+                                                 Q = Q1 × Q2 ,                Q0 = Q01 × Q02 .
+
+  Observable events synchronize when their labels agree:
+
+                                            ′
+                                          Eo = {(e1 , e2 ) ∈ E1o × E2o : ℓ1 (e1 ) = ℓ2 (e2 )}.
+
+  Unobservable events interleave:
+
+                           ′                                                                         ′     ′       ′
+                         Euo = {(e1 , ϵ) : e1 ∈ E1uo } ∪ {(ϵ, e2 ) : e2 ∈ E2uo },                  E = Eo ∪ Euo .
+
+  The transition relation satisfies
+
+                                                  ′    ′          ′                    ′                       ′
+                       ((q1 , q2 ), (e1 , e2 ), (q1 , q2 )) ∈ δ       ⇐⇒ (q1 , e1 , q1 ) ∈ δ1 ∧ (q2 , e2 , q2 ) ∈ δ2 ,
+
+  with the unchanged component retained for each unobservable interleaving. Moreover,
+
+                                             ′
+                                           ℓ ((e1 , e2 )) = ℓ1 (e1 ) = ℓ2 (e2 ),           ℓi (ϵ) = ϵ.
+
+
+  Source: Zhang, Annual Reviews in Control, 56, 100902, 2023, Definition 2.
+
+
+Zixi Wang                                                                                                                Xi’an Jiaotong University
+Programmatic Modeling of High-Order Observers                                                                                              6 / 11
+Order-2 Observer Pipeline
+
+  1. Construct Agent A1 ’s observer
+
+                                       G + A1 −→ GA1 ,                      Obsℓ1 (G) =: ObsA1 .
+
+  fa_agent_to_lfsa.py                         observer.py
+  2. Compose and change the observation perspective
+                                                                    (e1 ,e2 )7→e1 , ℓ1 7→ℓ2
+                                   CCℓ1 (GA1 , ObsA1 ) −−−−−−−−−−−−→ CCAG,Obs
+                                                                         1 →A2
+                                                                               .
+
+  CC.py          lfsa_to_fa.py                   fa_agent_to_lfsa.py
+  3. Construct the order-2 observer
+
+                                             Obsℓ2 CCAG,Obs
+                                                                       
+                                                       1 →A2
+                                                             =: ObsA1 ←A2 (G).
+
+  observer.py
+
+  Source: Zhang et al., High-Order Observers and High-Order State-Estimation-Based Properties, Slide 35.
+
+
+
+
+Zixi Wang                                                                                                  Xi’an Jiaotong University
+Programmatic Modeling of High-Order Observers                                                                                7 / 11
+Theorem
+
+
+  If reading β leads the order-2 observer to the state
+
+                                                   {(q1 , X1 ), . . . , (qn , Xn )},
+
+  then
+                                             MA1 ←A2 (G, β) = {X1 , . . . , Xn }.
+
+  Each pair (qi , Xi ) records a possible actual state qi and a corresponding
+  estimate Xi held by Agent A1 . Therefore, projecting the second components
+  gives Agent A2 ’s inference about Agent A1 .
+
+
+  Source: Zhang et al., High-Order Observers and High-Order State-Estimation-Based Properties, Theorem 25.
+
+
+
+
+Zixi Wang                                                                                                    Xi’an Jiaotong University
+Programmatic Modeling of High-Order Observers                                                                                  8 / 11
+Example                                        A system consisting of two ordered agents                                  A general framework
+
+
+
+            Example 27
+                                                                                                             4        d
+
+
+
+
+                                                                                                     a
+                                                                                         b
+                                                   a                 b
+                                           0            1                         2              3
+                                                                                          c                                                             α
+
+
+
+
+                                                                                                         a
+                                                                                                                                        α                              β
+                                                                                                                               A               B              C                    D       β
+                                                                                                             5
+                                                                                                                                                        α
+
+                                  (a) Automaton G, where E1 = {b, c, d},                                                  (b) The observer ObsA of automaton GA , where
+                                                                                                                                                                           1
+                                  ℓ1 (b) = ℓ1 (c) = α, ℓ1 (d) = β, E2 = {a, b},                                                                    1
+                                                                                                                          A = {0, 1}, B = {2}, C = {3, 4, 5}, D = {4}.
+                                  ℓ2 (a) = γ, ℓ2 (b) = ζ.
+
+
+
+                                                                                       (d, β)
+                                                                              (4, C)            (4, D)       (d, β)
+                      (0, A)
+                                                                     )
+                                                                ,ϵ
+                          (a, ϵ)             (b, α)        (a
+                               (b, α)
+                      (1, A)          (2, B)        (3, C)
+                                                                (a                                                           {(0, A)}
+                                               (c, α)              ,     ϵ)
+                                                                                                                                   γ                               ζ
+                                                                                                                                         ζ              ζ                          γ
+                                                                              (5, C)                                         {(1, A)}        {(2, B)}       {(2, B), (3, C)}               {(4, C), (5, C), (4, D)}
+
+                        (c) The concurrent composition CCℓ (GA , ObsA ).                                                                (d) The order-2 observer ObsA ←A (G).
+                                                                                 1       1           1                                                                         1       2
+
+
+
+
+              Kuize Zhang (XJTU)                                           15 June 2026
+        The implementation                        Zhejiang U
+                                 reproduces theat published  five-state, five-transition   37 / 55
+                                                                                         order-2
+                                              observer.
+
+                 Reference figure: Zhang et al., High-Order Observers and High-Order State-Estimation-Based Properties, Example 27.
+
+
+
+
+Zixi Wang                                                                                                                                                                                                      Xi’an Jiaotong University
+Programmatic Modeling of High-Order Observers                                                                                                                                                                                    9 / 11
+Complexity and Summary
+
+
+  Let n = |Q|. In the worst case,
+                                                                                  n
+                        |ObsA1 | ≤ 2n ,         |CC | ≤ n2n ,   |ObsA1 ←A2 | ≤ 2n2 .
+
+  Therefore, explicit construction has a double-exponential upper bound in both
+  time and storage, although only reachable states are generated.
+
+  Summary
+    • The programs implement LFSA conversion, observers, and concurrent
+      composition.
+    • The resulting order-2 observer computes Agent A2 ’s possible inferences
+      about Agent A1 .
+    • The published example provides an end-to-end validation case.
+
+
+
+Zixi Wang                                                                              Xi’an Jiaotong University
+Programmatic Modeling of High-Order Observers                                                           10 / 11
+Future Work
+
+
+
+
+       • Verify properties of Agent A2 ’s inference about Agent A1 ’s state estimates.
+       • Extend the pipeline to construct order-n observers.
+       • Develop visualization tools for generated observers and intermediate
+         models.
+
+
+
+
+Zixi Wang                                                                 Xi’an Jiaotong University
+Programmatic Modeling of High-Order Observers                                              11 / 11
+

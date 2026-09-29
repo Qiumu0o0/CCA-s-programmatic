@@ -100,7 +100,7 @@
   For $S=(Q,E,\delta,Q_0,\Sigma,\ell)$, its observer is
   \[
     S_{\mathrm{obs}}=(Q_{\mathrm{obs}},\Sigma_{\mathrm{obs}},
-    \delta_{\mathrm{obs}},q_{0,\mathrm{obs}}),
+    \delta_{\mathrm{obs}},q_{0 \mathrm{obs}}),
   \]
   where
   \[
@@ -114,7 +114,7 @@
   \]
   Then
   \[
-    q_{0,\mathrm{obs}}=UR(Q_0),
+    q_{0 \mathrm{obs}}=UR(Q_0),
   \]
   \[
     \delta_{\mathrm{obs}}(X,a)=UR\!\left(
@@ -205,7 +205,7 @@
   \vspace{0.35cm}
   Each pair $(q_i,X_i)$ records a possible actual state $q_i$ and a
   corresponding estimate $X_i$ held by Agent $A_1$. Therefore, projecting
-  the second components gives Agent $A_2$'s inference about Agent $A_1$.
+  the second components gives Agent $A_2$'s inference about Agent $A_1$'s estimate.
 
   \vfill
   {\tiny Source: Zhang et al., \textit{High-Order Observers and High-Order State-Estimation-Based Properties}, Theorem 25.}
@@ -224,18 +224,23 @@
 \end{frame}
 
 \begin{frame}{Complexity and Summary}
-  Let $n=|Q|$. In the worst case,
+  Let $n=|Q|$, $k=|E|$, and
+  $m=\max\{|\ell_1(E_o)|,|\ell_2(E_o)|\}$. Define automaton size by
   \[
-    |Obs_{A_1}|\leq 2^n,
-    \qquad
-    |CC|\leq n2^n,
-    \qquad
-    |Obs_{A_1\leftarrow A_2}|\leq 2^{n2^n}.
+    |A|:=|Q_A|+|\delta_A|.
   \]
-  Therefore, explicit construction has a double-exponential upper bound
-  in both time and storage, although only reachable states are generated.
+  The worst-case automaton sizes are
+  \[
+    |Obs_{A_1}|=O(m2^n),
+  \]
+  \[
+    |CC|=O(kn^2 2^n),
+    \qquad
+    |Obs_{A_1\leftarrow A_2}|=O\!\left(m2^{n2^n}\right).
+  \]
+  Here $m$ controls observer transitions, while $k$ controls CC transitions.
 
-  \vspace{0.35cm}
+  \vspace{0.2cm}
   \textbf{Summary}
   \begin{itemize}
     \item The programs implement LFSA conversion, observers, and concurrent composition.
